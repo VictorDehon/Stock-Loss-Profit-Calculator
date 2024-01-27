@@ -15,11 +15,19 @@ def main():
     for _ in range(Number_Of_Stocks_Bought):
         Stock_ID = input("What Stock Did You Buy (ShortCode)? ")
         Todays_Price, Day_Bought, Stock = Input(Stock_ID)
+        
+        # Prices function will return 0 if there's no financial data
         Price_On_Day_Bought = Prices(Stock_ID, Day_Bought)
-        ProfitOrLoss = MoneyMade(Todays_Price, Price_On_Day_Bought, Stock)
-        TotalMoney += ProfitOrLoss
 
-    print ("Your Total Money Made is: $",round(TotalMoney))
+        if Price_On_Day_Bought is not None:
+            ProfitOrLoss = MoneyMade(Todays_Price, Price_On_Day_Bought, Stock)
+            TotalMoney += ProfitOrLoss
+        else:
+            print(f"Skipping {Stock_ID} due to missing financial data.")
+
+    print("Your Total Money Made is: $", round(TotalMoney))
+    
+    
 
 def Input(Stock_ID):
     Day_Bought = input("When Did You Buy The Stock (Date in the form dd-mm-yy)? ")
@@ -32,19 +40,27 @@ def Prices(Stock_ID, Day_Bought):
     Start_Date = datetime.datetime.strptime(Day_Bought, "%d-%m-%y")
     End_Time = Start_Date + datetime.timedelta(days=1)
 
-    with warnings.catch_warnings():
-        warnings.simplefilter("ignore")
-        df = yf.download(Stock_ID, start=Start_Date, end=End_Time, interval="1d", progress=False)
+    try:
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+            df = yf.download(Stock_ID, start=Start_Date, end=End_Time, interval="1d", progress=False)
 
-    Price_On_Day_Bought = df.iloc[0, 1] #High price On that Day
+        if df.empty:
+            raise ValueError("No price data found for the specified date range.")
+
+        Price_On_Day_Bought = df.iloc[0, 1]  # High price On that Day
+    except ValueError or IndexError:
+        print ("There seems to be a problem accessing financial data for this day, apologies.")
+        Price_On_Day_Bought=None
 
     return Price_On_Day_Bought
 
-
 def MoneyMade(Todays_Price, Price_On_Day_Bought, Stock): #Amount of money made
     Price_Difference = Todays_Price - Price_On_Day_Bought
+    
     Quantity_Stocks = float(input("How many shares did you buy? "))
     ProfitOrLoss = Price_Difference * Quantity_Stocks
+    
     if ProfitOrLoss > 0:
         print("You Have Made: $",round(ProfitOrLoss),"On", (Stock.info["shortName"]), emoji.emojize(":beaming_face_with_smiling_eyes:"))
     if ProfitOrLoss == 0:
