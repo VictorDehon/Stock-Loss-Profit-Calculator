@@ -53,13 +53,6 @@ def MoneyMade(Todays_Price, Price_On_Day_Bought, Stock): #Amount of money made
         print ("You have lost: $",round(abs(ProfitOrLoss)),"On", (Stock.info["shortName"]), emoji.emojize(":grimacing_face:"))
     return ProfitOrLoss
 
-def first(V1):
-    return V1
-def second(V2):
-    return V2
-def third(V3):
-    return V3
-
 
 if __name__ == "__main__":
     main()
