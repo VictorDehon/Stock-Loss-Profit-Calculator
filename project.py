@@ -41,7 +41,7 @@ def Prices(Stock_ID, Day_Bought):
     return Price_On_Day_Bought
 
 
-def MoneyMade(Todays_Price, Price_On_Day_Bought, Stock):
+def MoneyMade(Todays_Price, Price_On_Day_Bought, Stock): #Amount of money made
     Price_Difference = Todays_Price - Price_On_Day_Bought
     Quantity_Stocks = float(input("How many shares did you buy? "))
     ProfitOrLoss = Price_Difference * Quantity_Stocks
